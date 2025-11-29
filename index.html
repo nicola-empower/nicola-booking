@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empower Sync | Book Time</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* Brand Palette: Professional Teal & Deep Slate */
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.9);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            
+            --color-primary: #0f766e; /* Deep Teal */
+            --color-secondary: #334155; /* Slate */
+            --color-accent: #f59e0b; /* Gold/Amber */
+            --color-success: #10b981;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; transition: all 0.3s ease; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        /* Main Container */
+        .booking-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 1000px;
+            min-height: 600px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar (Profile & Service Info) */
+        .sidebar {
+            background: #f8fafc;
+            padding: 40px 30px;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--color-primary);
+            margin-bottom: 30px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .profile-area h1 { font-size: 1.5rem; margin-bottom: 10px; color: var(--color-secondary); }
+        .profile-area p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; }
+
+        .service-summary {
+            margin-top: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            display: none; /* Hidden until service selected */
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+        .summary-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
+        .total-price { font-weight: 700; font-size: 1.2rem; color: var(--color-primary); border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px; }
+
+        /* Right Content Area */
+        .content-area { padding: 40px; position: relative; }
+
+        /* Step 1: Service Selection */
+        .step-container { display: none; }
+        .step-container.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        h2 { font-size: 1.4rem; margin-bottom: 25px; color: var(--color-secondary); }
+
+        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .service-card {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+        .service-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        .service-card.selected { border-color: var(--color-primary); background: #f0fdfa; }
+        
+        .service-title { font-weight: 600; margin-bottom: 5px; display: block; }
+        .service-price { font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+        .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; background: #e2e8f0; color: #64748b; }
+        .badge.paid { background: #dcfce7; color: #166534; }
+
+        /* Step 2: Date & Time */
+        .calendar-strip {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .date-card {
+            min-width: 70px;
+            padding: 15px 10px;
+            background: white;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+        }
+        .date-card.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+        .date-day { font-size: 0.8rem; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        .date-num { font-size: 1.2rem; font-weight: 700; }
+
+        .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .time-slot {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .time-slot:hover { border-color: var(--color-primary); }
+        .time-slot.selected { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+        .time-slot.disabled { opacity: 0.4; pointer-events: none; background: #f1f5f9; text-decoration: line-through; }
+
+        /* Step 3: Checkout */
+        .stripe-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 0.85rem; margin-bottom: 8px; color: var(--text-muted); font-weight: 500; }
+        .fake-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: inherit;
+            background: white;
+        }
+        .card-row { display: flex; gap: 10px; }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-primary:hover { background: #0d9488; }
+        .btn-back { background: transparent; border: none; color: var(--text-muted); cursor: pointer; margin-bottom: 20px; display: flex; align-items: center; gap: 5px; }
+
+        /* Admin Toggle (Hidden feature) */
+        .admin-toggle { position: absolute; bottom: 20px; left: 20px; opacity: 0.3; font-size: 0.8rem; cursor: pointer; }
+        .admin-toggle:hover { opacity: 1; }
+
+        @media (max-width: 800px) { .booking-container { grid-template-columns: 1fr; } .sidebar { display: none; } }
+    </style>
+</head>
+<body>
+
+    <div class="booking-container">
+        
+        <div class="sidebar">
+            <div class="brand"><i class="fa-solid fa-bolt"></i> Empower Sync</div>
+            <div class="profile-area">
+                <h1>Book Nicola</h1>
+                <p>Select a service to get started. My calendar automatically syncs with my work & family schedule to show you true availability.</p>
+            </div>
+
+            <div id="serviceSummary" class="service-summary">
+                <div class="summary-row"><span>Service</span><span id="sumName">--</span></div>
+                <div class="summary-row"><span>Duration</span><span id="sumDur">--</span></div>
+                <div class="summary-row"><span>Date</span><span id="sumDate">--</span></div>
+                <div class="summary-row"><span>Time</span><span id="sumTime">--</span></div>
+                <div class="total-price" id="sumPrice">£0.00</div>
+            </div>
+            
+            <div class="admin-toggle" onclick="toggleRole()">Current View: <strong id="roleLabel">Client</strong></div>
+        </div>
+
+        <div class="content-area">
+            
+            <div id="step1" class="step-container active">
+                <h2>Select Service</h2>
+                <div class="service-grid">
+                    <div class="service-card" onclick="selectService('VA Support', 40, 60, 'paid')">
+                        <span class="service-title">Virtual Assistant <span class="badge paid">Paid</span></span>
+                        <span class="service-price">£40.00 / hour</span>
+                        <p style="font-size:0.8rem; margin-top:8px; color:#666;">General admin, email management, and ad-hoc support.</p>
+                    </div>
+                    <div class="service-card" onclick="selectService('Automation Discovery', 100, 45, 'paid')">
+                        <span class="service-title">Automation Build <span class="badge paid">Deposit</span></span>
+                        <span class="service-price">£100.00 / deposit</span>
+                        <p style="font-size:0.8rem; margin-top:8px; color:#666;">Google Apps Script & Workflow automation scoping.</p>
+                    </div>
+                    <div class="service-card" onclick="selectService('Web Consult', 0, 15, 'free')">
+                        <span class="service-title">Web Discovery <span class="badge">Free</span></span>
+                        <span class="service-price">15 Mins</span>
+                        <p style="font-size:0.8rem; margin-top:8px; color:#666;">Initial chat for website projects.</p>
+                    </div>
+                    <div class="service-card" onclick="selectService('Coffee Catch-up', 0, 60, 'friend')">
+                        <span class="service-title">Friends & Family <span class="badge" style="background:#fef3c7; color:#b45309">Social</span></span>
+                        <span class="service-price">On the House</span>
+                        <p style="font-size:0.8rem; margin-top:8px; color:#666;">Lunch, coffee, or general chaos coordination.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step2" class="step-container">
+                <button class="btn-back" onclick="goToStep(1)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h2>Select Date & Time</h2>
+                
+                <div class="calendar-strip" id="dateStrip">
+                    </div>
+
+                <h3 style="font-size:0.9rem; margin-bottom:10px; color:#64748b;">Available Slots</h3>
+                <div class="time-grid" id="timeGrid">
+                    </div>
+            </div>
+
+            <div id="step3" class="step-container">
+                <button class="btn-back" onclick="goToStep(2)"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h2 id="checkoutTitle">Secure Checkout</h2>
+                
+                <div class="stripe-box">
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" class="fake-input" placeholder="you@example.com">
+                    </div>
+                    <div class="input-group" id="paymentFields">
+                        <label>Card Information <i class="fa-solid fa-lock" style="color:#10b981; margin-left:5px;"></i></label>
+                        <div class="fake-input" style="display:flex; align-items:center; gap:10px;">
+                            <i class="fa-regular fa-credit-card" style="color:#94a3b8;"></i>
+                            <input type="text" placeholder="0000 0000 0000 0000" style="border:none; outline:none; width:100%;">
+                        </div>
+                        <div class="card-row" style="margin-top:10px;">
+                            <input type="text" class="fake-input" placeholder="MM / YY">
+                            <input type="text" class="fake-input" placeholder="CVC">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="completeBooking()">
+                    <span id="btnText">Pay & Confirm</span>
+                </button>
+            </div>
+
+            <div id="stepSuccess" class="step-container" style="text-align:center; padding-top:40px;">
+                <div style="width:80px; height:80px; background:#dcfce7; color:#166534; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto; font-size:2rem;">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h2>Booking Confirmed!</h2>
+                <p style="color:#64748b; margin-bottom:20px;">A calendar invite has been sent to your email.<br>I look forward to chatting.</p>
+                <button class="fake-input" style="width:auto; cursor:pointer;" onclick="location.reload()">Book Another</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        let currentStep = 1;
+        let selectedService = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        let userRole = 'client'; // 'client' or 'admin'
+
+        // --- LIFE LOGIC (The "Hidden" Schedule) ---
+        // This mimics your internal Google Calendar
+        const lifeEvents = {
+            'Mon': ['08:00', '09:00', '15:00', '16:00'], // School Drop/Pickup
+            'Tue': ['14:00', '15:00'], // Physio
+            'Wed': [], // Free
+            'Thu': ['09:00', '10:00', '11:00', '12:00'], // Web Build Block
+            'Fri': ['13:00', '14:00', '15:00', '16:00']  // Early finish / Kids
+        };
+
+        // --- FUNCTIONS ---
+
+        function goToStep(step) {
+            document.querySelectorAll('.step-container').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+        }
+
+        function selectService(name, price, duration, type) {
+            selectedService = { name, price, duration, type };
+            
+            // Update Summary Sidebar
+            document.getElementById('serviceSummary').style.display = 'block';
+            document.getElementById('sumName').innerText = name;
+            document.getElementById('sumDur').innerText = duration + " mins";
+            document.getElementById('sumPrice').innerText = price === 0 ? 'Free' : `£${price}.00`;
+
+            // Highlight Card
+            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            // Generate Dates
+            renderDates();
+            goToStep(2);
+        }
+
+        function renderDates() {
+            const strip = document.getElementById('dateStrip');
+            strip.innerHTML = '';
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+            
+            // Create next 5 days
+            for(let i=0; i<5; i++) {
+                let today = new Date();
+                today.setDate(today.getDate() + i + 1); // Start tomorrow
+                let dayName = days[today.getDay() - 1] || 'Mon'; // Simple mock day logic
+                
+                let div = document.createElement('div');
+                div.className = 'date-card';
+                div.innerHTML = `<span class="date-day">${dayName}</span><span class="date-num">${today.getDate()}</span>`;
+                div.onclick = () => selectDate(div, dayName, today.toLocaleDateString());
+                strip.appendChild(div);
+            }
+        }
+
+        function selectDate(el, dayName, fullDate) {
+            document.querySelectorAll('.date-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            selectedDate = fullDate;
+            document.getElementById('sumDate').innerText = fullDate;
+            
+            renderTimes(dayName);
+        }
+
+        function renderTimes(dayName) {
+            const grid = document.getElementById('timeGrid');
+            grid.innerHTML = '';
+            
+            // Base Slots (9am - 5pm)
+            const baseSlots = ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'];
+            
+            // Get blocked times from "Life Logic"
+            const blocked = lifeEvents[dayName] || [];
+
+            baseSlots.forEach(time => {
+                const btn = document.createElement('div');
+                btn.className = 'time-slot';
+                btn.innerText = time;
+                
+                // THE LOGIC:
+                // If time is in lifeEvents, it is DISABLED for Clients.
+                // Unless it's the "Friends" service type (maybe you allow friends during school run?)
+                
+                if (blocked.includes(time)) {
+                    btn.classList.add('disabled');
+                    btn.title = "Unavailable (Life/Work Conflict)";
+                    // Admin view shows WHY it is blocked
+                    if(userRole === 'admin') {
+                        btn.style.background = '#fee2e2'; // Red tint
+                        btn.innerText += ' (Busy)';
+                    }
+                } else {
+                    btn.onclick = () => selectTime(btn, time);
+                }
+                
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectTime(el, time) {
+            document.querySelectorAll('.time-slot').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedTime = time;
+            document.getElementById('sumTime').innerText = time;
+            
+            // Prepare Checkout
+            if (selectedService.price === 0) {
+                document.getElementById('checkoutTitle').innerText = "Confirm Details";
+                document.getElementById('paymentFields').style.display = 'none';
+                document.getElementById('btnText').innerText = "Confirm Booking";
+            } else {
+                document.getElementById('checkoutTitle').innerText = "Secure Checkout";
+                document.getElementById('paymentFields').style.display = 'block';
+                document.getElementById('btnText').innerText = `Pay £${selectedService.price}.00`;
+            }
+            
+            setTimeout(() => goToStep(3), 400);
+        }
+
+        function completeBooking() {
+            // Mock loading state
+            const btn = document.querySelector('.btn-primary');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+            
+            setTimeout(() => {
+                goToStep('Success');
+            }, 1500);
+        }
+
+        // Mock Admin Toggle
+        function toggleRole() {
+            userRole = userRole === 'client' ? 'admin' : 'client';
+            document.getElementById('roleLabel').innerText = userRole === 'client' ? 'Client' : 'Admin (God View)';
+            alert(`Switched to ${userRole.toUpperCase()} view.\nRe-select a date to see hidden availability.`);
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+type User @table {
+  displayName: String!
+  email: String!
+  createdAt: Timestamp!
+  photoUrl: String
+  timeZone: String
+}
+
+type Category @table {
+  name: String!
+  createdAt: Timestamp!
+  color: String
+  user: User
+}
+
+type Appointment @table {
+  title: String!
+  startTime: Timestamp!
+  endTime: Timestamp!
+  createdAt: Timestamp!
+  priority: String!
+  description: String
+  location: String
+  reminderTime: Timestamp
+  creator: User
+  category: Category
+}
+
+type Invitation @table {
+  status: String!
+  createdAt: Timestamp!
+  message: String
+  appointment: Appointment!
+  invitee: User!
+}
