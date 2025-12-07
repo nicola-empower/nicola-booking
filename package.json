@@ -1,5 +1,5 @@
 {
-  "name": "empower-booking",
+  "name": "nicola-booking",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,14 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
+    "date-fns": "^4.1.0",
     "firebase": "^12.6.0",
     "next": "^14",
     "react": "^18",
+    "react-big-calendar": "^1.19.4",
     "react-dom": "^18"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/react-big-calendar": "^1.16.3",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",

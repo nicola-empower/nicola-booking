@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: "Empower Sync | Book Time",
     description: "Book time with Nicola - Virtual Assistant, Automation, and Web Services",
+    manifest: "/manifest.json",
 };
 
 export default function RootLayout({

@@ -1,0 +1,39 @@
+
+> empower-booking@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.33
+  - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for client (static)...
+ ○ (pwa) Service worker: C:\Users\nicol\OneDrive\Desktop\digital solutions\empower booking - Copy\public\sw.js
+ ○ (pwa)   URL: /sw.js
+ ○ (pwa)   Scope: /
+Failed to compile.
+
+./app/book/[site]/page.tsx
+Error: 
+  [31mx[0m Expected ';', '}' or <eof>
+    ,-[[36;1;4mC:\Users\nicol\OneDrive\Desktop\digital solutions\empower booking - Copy\app\book\[site]\page.tsx[0m:65:1]
+ [2m65[0m |     const config = SITE_CONFIG[params.site];
+ [2m66[0m | 
+ [2m67[0m |     if (!config) {
+ [2m68[0m |                     Powered by Empower Booking PWA
+    : [31;1m                    ^^^|^^^[0m[33;1m ^^[0m
+    :                        [31;1m`-- [31;1mThis is the expression part of an expression statement[0m[0m
+ [2m69[0m |                 </p >
+ [2m70[0m |             </div >
+ [2m70[0m |         </div >
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./app/book/[site]/page.tsx
+
+
+> Build failed because of webpack errors
