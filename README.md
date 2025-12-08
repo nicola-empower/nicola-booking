@@ -1,7 +1,7 @@
 # Empower Sync - Calendar & Booking System
 
 A life-first calendar and booking application built with Next.js, featuring admin calendar management and client booking with Stripe payment integration.
-<img width="2841" height="1518" alt="image" src="https://github.com/user-attachments/assets/0a3b8a8e-4340-494d-a4da-671e7e2fcbdb" />
+
 
 ## 🚀 Current Status
 
